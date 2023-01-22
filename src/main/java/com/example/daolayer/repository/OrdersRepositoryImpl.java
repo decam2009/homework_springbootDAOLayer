@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrdersRepositoryImpl implements OrdersRepository {
 
+    private final String QUERY_FILENAME = "query.sql";
     private final NamedParameterJdbcTemplate template;
+    private final String sqlScript = read(QUERY_FILENAME);
 
     private static String read(String scriptFileName) {
         try (InputStream is = new ClassPathResource(scriptFileName).getInputStream();
@@ -33,7 +35,6 @@ public class OrdersRepositoryImpl implements OrdersRepository {
 
     @Override
     public List<Order> findProductsByCustomerName(String customerName) {
-        String sqlScript = read("query.sql");
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", customerName);
         return template.query(sqlScript, params, new OrdersRowMapper());
